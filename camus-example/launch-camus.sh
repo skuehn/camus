@@ -11,8 +11,6 @@ KAFKA_HDFS_ROOT=$1
 BROKER=$2
 JAR=target/camus-example-*-SNAPSHOT-shaded.jar
 
-# /user/scott.kuehn/kafka-etl/history
-
 hadoop jar \
     ${JAR} \
     -p camus.properties \

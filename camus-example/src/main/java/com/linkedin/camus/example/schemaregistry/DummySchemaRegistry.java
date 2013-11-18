@@ -14,9 +14,11 @@ import com.linkedin.camus.schemaregistry.MemorySchemaRegistry;
  */
 public class DummySchemaRegistry extends MemorySchemaRegistry<Schema> {
 	public DummySchemaRegistry(Configuration conf) {
-		super();
-		super.register("DUMMY_LOG", DummyLog.newBuilder().build().getSchema());
-		super.register("DUMMY_LOG_2", DummyLog2.newBuilder().build()
-				.getSchema());
+        this();
 	}
+    public DummySchemaRegistry() {
+        super();
+        super.register("DUMMY_LOG", DummyLog.SCHEMA$);
+        super.register("DUMMY_LOG_2", DummyLog2.SCHEMA$);
+    }
 }

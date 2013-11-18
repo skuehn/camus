@@ -1,13 +1,11 @@
 package com.linkedin.camus.etl.kafka.coders;
 
+import com.linkedin.camus.coders.CamusWrapper;
 import kafka.message.Message;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData.Record;
 import org.apache.avro.generic.GenericDatumReader;
-import org.apache.hadoop.conf.Configuration;
-
-import com.linkedin.camus.coders.CamusWrapper;
+import org.apache.avro.io.DecoderFactory;
 
 public class LatestSchemaKafkaAvroMessageDecoder extends KafkaAvroMessageDecoder
 {
@@ -17,24 +15,11 @@ public class LatestSchemaKafkaAvroMessageDecoder extends KafkaAvroMessageDecoder
 	{
 		try
 		{
-			GenericDatumReader<Record> reader = new GenericDatumReader<Record>();
-			
-			Schema schema = super.registry.getLatestSchemaByTopic(super.topicName).getSchema();
-			
-			reader.setSchema(schema);
-			
-			return new CamusWrapper<Record>(reader.read(
-                    null, 
-                    decoderFactory.jsonDecoder(
-                            schema, 
-                            new String(
-                                    payload, 
-                                    //Message.payloadOffset(message.magic()),
-                                    Message.MagicOffset(),
-                                    payload.length - Message.MagicOffset()
-                            )
-                    )
-            ));
+            Schema schema = super.registry.getLatestSchemaByTopic(super.topicName).getSchema();
+            GenericDatumReader<Record> reader = new GenericDatumReader<Record>(schema);
+            Record record = reader.read(null, DecoderFactory.get().binaryDecoder(payload, Message.MagicLength(),
+                    payload.length - Message.MagicLength(), null));
+            return new CamusWrapper<Record>(record);
 		}
 		catch (Exception e)
 		{

@@ -375,6 +375,7 @@ public class EtlInputFormat extends InputFormat<EtlKey, CamusWrapper> {
 			MessageDecoderFactory.createMessageDecoder(context, topic);
 			return true;
 		} catch (Exception e) {
+            log.warn("Error creating message decoder: " + e);
 			return false;
 		}
 	}
